@@ -1,11 +1,12 @@
 'use client';
 
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import Icon from '@/components/Icon';
 import ImageField from '@/components/admin/ImageField';
 import { StringList, useToast } from '@/components/admin/ui';
 import { getBrowserClient } from '@/lib/supabase/browser';
 import { revalidateSite } from '@/app/actions/revalidate';
+import { cleanupMedia } from '@/lib/media-cleanup';
 import type { SiteSettings } from '@/lib/types';
 
 export default function SettingsManager({ initial }: { initial: SiteSettings }) {
@@ -14,6 +15,8 @@ export default function SettingsManager({ initial }: { initial: SiteSettings }) 
 
   const [s, setS] = useState<SiteSettings>(initial);
   const [busy, setBusy] = useState(false);
+  // Logo id as last saved, so replacing the logo frees the old Cloudinary file.
+  const savedLogoId = useRef(initial.brand.logoPublicId ?? '');
 
   const set = <K extends keyof SiteSettings>(key: K, value: Partial<SiteSettings[K]>) =>
     setS((prev) => ({ ...prev, [key]: { ...prev[key], ...value } }));
@@ -32,6 +35,12 @@ export default function SettingsManager({ initial }: { initial: SiteSettings }) 
 
     setBusy(false);
     if (error) return show(error.message, 'error');
+
+    const newLogoId = s.brand.logoPublicId ?? '';
+    if (savedLogoId.current && savedLogoId.current !== newLogoId) {
+      await cleanupMedia([savedLogoId.current]);
+    }
+    savedLogoId.current = newLogoId;
 
     await revalidateSite();
     show('Site settings saved.');
@@ -95,7 +104,8 @@ export default function SettingsManager({ initial }: { initial: SiteSettings }) 
         <ImageField
           label="Logo"
           value={s.brand.logoUrl}
-          onChange={(url) => set('brand', { logoUrl: url })}
+          publicId={s.brand.logoPublicId}
+          onChange={(url, publicId) => set('brand', { logoUrl: url, logoPublicId: publicId })}
           hint="Used in the header, footer and admin panel. A transparent PNG works best."
         />
 

@@ -5,6 +5,7 @@ import Icon from '@/components/Icon';
 import { ConfirmDialog, EmptyState, Modal, useToast } from '@/components/admin/ui';
 import { getBrowserClient } from '@/lib/supabase/browser';
 import { cld, isCloudinaryConfigured } from '@/lib/cloudinary';
+import { cleanupMedia } from '@/lib/media-cleanup';
 import type { MediaAssetRow } from '@/lib/supabase/database.types';
 
 function formatBytes(bytes: number | null) {
@@ -24,6 +25,7 @@ export default function MediaManager({ initial }: { initial: MediaAssetRow[] }) 
   const [uploading, setUploading] = useState(0);
   const [viewing, setViewing] = useState<MediaAssetRow | null>(null);
   const [deleting, setDeleting] = useState<MediaAssetRow | null>(null);
+  const [inUse, setInUse] = useState<{ asset: MediaAssetRow; usedIn: string[] } | null>(null);
   const [busy, setBusy] = useState(false);
 
   const filtered = assets.filter((a) =>
@@ -91,23 +93,43 @@ export default function MediaManager({ initial }: { initial: MediaAssetRow[] }) 
     }
   }
 
+  /** First pass respects references: an image still in use is not deleted. */
   async function confirmDelete() {
     if (!deleting) return;
+    const asset = deleting;
     setBusy(true);
 
-    const res = await fetch('/api/admin/cloudinary/delete', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ publicId: deleting.public_id }),
-    });
-    const json = await res.json().catch(() => ({}));
+    const result = await cleanupMedia([asset.public_id]);
 
     setBusy(false);
     setDeleting(null);
+
+    if (result.kept.length > 0) {
+      // Still referenced — show where, and let the admin decide.
+      setInUse({ asset, usedIn: result.kept[0].usedIn });
+      return;
+    }
+    if (result.failed.length > 0) {
+      return show(result.failed[0].error || 'Could not delete the image.', 'error');
+    }
+
+    setViewing(null);
+    await refresh();
+    show('Image deleted.');
+  }
+
+  /** Second pass, only after the admin confirms they want it gone anyway. */
+  async function forceDelete() {
+    if (!inUse) return;
+    setBusy(true);
+    const result = await cleanupMedia([inUse.asset.public_id], { force: true });
+    setBusy(false);
+    setInUse(null);
     setViewing(null);
 
-    if (!res.ok) return show(json.error || 'Could not delete the image.', 'error');
-
+    if (result.failed.length > 0) {
+      return show(result.failed[0].error || 'Could not delete the image.', 'error');
+    }
     await refresh();
     show('Image deleted.');
   }
@@ -251,11 +273,54 @@ export default function MediaManager({ initial }: { initial: MediaAssetRow[] }) 
       {deleting && (
         <ConfirmDialog
           title="Delete this image?"
-          message="It will be removed from Cloudinary. Any page still using it will show a broken image, so check first."
+          message="It will be permanently removed from Cloudinary. If it is still used anywhere on the website, you'll be told before anything is deleted."
           busy={busy}
           onConfirm={confirmDelete}
           onCancel={() => setDeleting(null)}
         />
+      )}
+
+      {inUse && (
+        <Modal
+          title="This image is still in use"
+          onClose={() => setInUse(null)}
+          footer={
+            <>
+              <button className="a-btn a-btn--ghost" onClick={() => setInUse(null)}>
+                Keep image
+              </button>
+              <button className="a-btn a-btn--primary" onClick={forceDelete} disabled={busy}>
+                {busy ? <span className="a-spinner" /> : <Icon name="alert" />}
+                Delete anyway
+              </button>
+            </>
+          }
+        >
+          <div className="a-alert a-alert--warn">
+            <Icon name="alert" />
+            <span>
+              Nothing was deleted. Deleting this image anyway will leave a broken image in the
+              place{inUse.usedIn.length === 1 ? '' : 's'} listed below.
+            </span>
+          </div>
+          <ul style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+            {inUse.usedIn.map((where) => (
+              <li
+                key={where}
+                style={{
+                  fontSize: 13.5,
+                  fontWeight: 600,
+                  background: 'var(--off-white)',
+                  border: '1px solid var(--line)',
+                  borderRadius: 10,
+                  padding: '10px 14px',
+                }}
+              >
+                {where}
+              </li>
+            ))}
+          </ul>
+        </Modal>
       )}
 
       {toastNode}

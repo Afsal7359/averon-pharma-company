@@ -8,6 +8,7 @@ import ImageField from '@/components/admin/ImageField';
 import { ConfirmDialog, EmptyState, Modal, StringList, useToast } from '@/components/admin/ui';
 import { getBrowserClient } from '@/lib/supabase/browser';
 import { revalidateSite } from '@/app/actions/revalidate';
+import { cleanupMedia } from '@/lib/media-cleanup';
 import { cld } from '@/lib/cloudinary';
 import { slugify } from '@/lib/slug';
 import type {
@@ -149,6 +150,8 @@ export default function ProductsManager({
     if (!payload.subcategory_id) return show('Choose a range for this product.', 'error');
     if (!payload.name || !payload.slug) return show('A product name is required.', 'error');
 
+    const previousImageId = editing?.image_public_id ?? null;
+
     setBusy(true);
     const { error } = editing
       ? await supabase.from('products').update(payload).eq('id', editing.id)
@@ -165,6 +168,10 @@ export default function ProductsManager({
           : error.message,
         'error',
       );
+    }
+
+    if (previousImageId && previousImageId !== payload.image_public_id) {
+      await cleanupMedia([previousImageId]);
     }
 
     setOpen(false);
@@ -203,10 +210,12 @@ export default function ProductsManager({
   async function confirmDelete() {
     if (!deleting) return;
     setBusy(true);
+    const orphanedImage = deleting.image_public_id;
     const { error } = await supabase.from('products').delete().eq('id', deleting.id);
     setBusy(false);
     setDeleting(null);
     if (error) return show(error.message, 'error');
+    await cleanupMedia([orphanedImage]);
     await refresh();
     await revalidateSite(['/products']);
     show('Product deleted.');

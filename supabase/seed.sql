@@ -550,66 +550,73 @@ begin
   returning id into cat_well;
 
   -- Pharmaceuticals → Anti-Infectives (default)
-  insert into public.product_subcategories (category_id, name, slug, description, sort_order, is_default)
+  insert into public.product_subcategories (category_id, name, slug, description, image_url, sort_order, is_default)
   values (cat_pharma, 'Anti-Infectives', 'anti-infectives',
-          'Antibacterial and antimicrobial formulations for common and resistant infections.', 1, true)
+          'Antibacterial and antimicrobial formulations for common and resistant infections.',
+          'https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?auto=format&fit=crop&w=900&q=80', 1, true)
   returning id into sub;
-  insert into public.products (subcategory_id, name, slug, composition, description, pack_size, dosage_form, highlights, sort_order) values
-    (sub, 'Averocef 200', 'averocef-200', 'Cefixime 200 mg', 'Third-generation cephalosporin for respiratory and urinary tract infections.', '10 x 10 Tablets', 'Tablet', array['Broad spectrum','Twice daily'], 1),
-    (sub, 'Averoclav 625', 'averoclav-625', 'Amoxycillin 500 mg + Clavulanic Acid 125 mg', 'Beta-lactam combination for a wide range of bacterial infections.', '10 x 6 Tablets', 'Tablet', array['Beta-lactamase protected'], 2),
-    (sub, 'Averozid 500', 'averozid-500', 'Azithromycin 500 mg', 'Macrolide antibiotic with a convenient short course.', '1 x 3 Tablets', 'Tablet', array['3-day course','Once daily'], 3);
+  insert into public.products (subcategory_id, name, slug, composition, description, image_url, pack_size, dosage_form, highlights, sort_order) values
+    (sub, 'Averocef 200', 'averocef-200', 'Cefixime 200 mg', 'Third-generation cephalosporin for respiratory and urinary tract infections.', 'https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?auto=format&fit=crop&w=700&q=80', '10 x 10 Tablets', 'Tablet', array['Broad spectrum','Twice daily'], 1),
+    (sub, 'Averoclav 625', 'averoclav-625', 'Amoxycillin 500 mg + Clavulanic Acid 125 mg', 'Beta-lactam combination for a wide range of bacterial infections.', 'https://images.unsplash.com/photo-1631549916768-4119b2e5f926?auto=format&fit=crop&w=700&q=80', '10 x 6 Tablets', 'Tablet', array['Beta-lactamase protected'], 2),
+    (sub, 'Averozid 500', 'averozid-500', 'Azithromycin 500 mg', 'Macrolide antibiotic with a convenient short course.', 'https://images.unsplash.com/photo-1585435557343-3b092031a831?auto=format&fit=crop&w=700&q=80', '1 x 3 Tablets', 'Tablet', array['3-day course','Once daily'], 3);
 
   -- Pharmaceuticals → Pain & Inflammation
-  insert into public.product_subcategories (category_id, name, slug, description, sort_order)
+  insert into public.product_subcategories (category_id, name, slug, description, image_url, sort_order)
   values (cat_pharma, 'Pain & Inflammation', 'pain-inflammation',
-          'Analgesic and anti-inflammatory formulations for acute and chronic pain.', 2)
+          'Analgesic and anti-inflammatory formulations for acute and chronic pain.',
+          'https://images.unsplash.com/photo-1626716493137-b67fe9501e76?auto=format&fit=crop&w=900&q=80', 2)
   returning id into sub;
-  insert into public.products (subcategory_id, name, slug, composition, description, pack_size, dosage_form, highlights, sort_order) values
-    (sub, 'Averodol P', 'averodol-p', 'Aceclofenac 100 mg + Paracetamol 325 mg', 'Dual-action relief for musculoskeletal and post-operative pain.', '10 x 10 Tablets', 'Tablet', array['Fast onset'], 1),
-    (sub, 'Averonac SP', 'averonac-sp', 'Aceclofenac 100 mg + Paracetamol 325 mg + Serratiopeptidase 15 mg', 'Anti-inflammatory combination with enzymatic anti-oedema action.', '10 x 10 Tablets', 'Tablet', array['Reduces swelling'], 2);
+  insert into public.products (subcategory_id, name, slug, composition, description, image_url, pack_size, dosage_form, highlights, sort_order) values
+    (sub, 'Averodol P', 'averodol-p', 'Aceclofenac 100 mg + Paracetamol 325 mg', 'Dual-action relief for musculoskeletal and post-operative pain.', 'https://images.unsplash.com/photo-1626716493137-b67fe9501e76?auto=format&fit=crop&w=700&q=80', '10 x 10 Tablets', 'Tablet', array['Fast onset'], 1),
+    (sub, 'Averonac SP', 'averonac-sp', 'Aceclofenac 100 mg + Paracetamol 325 mg + Serratiopeptidase 15 mg', 'Anti-inflammatory combination with enzymatic anti-oedema action.', 'https://images.unsplash.com/photo-1471864190281-a93a3070b6de?auto=format&fit=crop&w=700&q=80', '10 x 10 Tablets', 'Tablet', array['Reduces swelling'], 2);
 
   -- Pharmaceuticals → Gastro Care
-  insert into public.product_subcategories (category_id, name, slug, description, sort_order)
+  insert into public.product_subcategories (category_id, name, slug, description, image_url, sort_order)
   values (cat_pharma, 'Gastro Care', 'gastro-care',
-          'Acid control, digestive and gut-health formulations.', 3)
+          'Acid control, digestive and gut-health formulations.',
+          'https://images.unsplash.com/photo-1585435557343-3b092031a831?auto=format&fit=crop&w=900&q=80', 3)
   returning id into sub;
-  insert into public.products (subcategory_id, name, slug, composition, description, pack_size, dosage_form, highlights, sort_order) values
-    (sub, 'Averopan DSR', 'averopan-dsr', 'Pantoprazole 40 mg + Domperidone 30 mg (SR)', 'Proton pump inhibitor with prokinetic for reflux and dyspepsia.', '10 x 10 Capsules', 'Capsule', array['Sustained release'], 1),
-    (sub, 'Averozyme Syrup', 'averozyme-syrup', 'Digestive enzyme blend', 'Palatable enzyme syrup supporting digestion and appetite.', '200 ml Bottle', 'Syrup', array['Sugar-free'], 2);
+  insert into public.products (subcategory_id, name, slug, composition, description, image_url, pack_size, dosage_form, highlights, sort_order) values
+    (sub, 'Averopan DSR', 'averopan-dsr', 'Pantoprazole 40 mg + Domperidone 30 mg (SR)', 'Proton pump inhibitor with prokinetic for reflux and dyspepsia.', 'https://images.unsplash.com/photo-1587854692152-cbe660dbde88?auto=format&fit=crop&w=700&q=80', '10 x 10 Capsules', 'Capsule', array['Sustained release'], 1),
+    (sub, 'Averozyme Syrup', 'averozyme-syrup', 'Digestive enzyme blend', 'Palatable enzyme syrup supporting digestion and appetite.', 'https://images.unsplash.com/photo-1576602976047-174e57a47881?auto=format&fit=crop&w=700&q=80', '200 ml Bottle', 'Syrup', array['Sugar-free'], 2);
 
   -- Nutraceuticals → Vitamins & Minerals (default)
-  insert into public.product_subcategories (category_id, name, slug, description, sort_order, is_default)
+  insert into public.product_subcategories (category_id, name, slug, description, image_url, sort_order, is_default)
   values (cat_nutra, 'Vitamins & Minerals', 'vitamins-minerals',
-          'Daily micronutrient support for energy, immunity and recovery.', 1, true)
+          'Daily micronutrient support for energy, immunity and recovery.',
+          'https://images.unsplash.com/photo-1512069772995-ec65ed45afd6?auto=format&fit=crop&w=900&q=80', 1, true)
   returning id into sub;
-  insert into public.products (subcategory_id, name, slug, composition, description, pack_size, dosage_form, highlights, sort_order) values
-    (sub, 'Averovit Gold', 'averovit-gold', 'Multivitamin + Multimineral + Antioxidants', 'Comprehensive daily supplement for adults.', '10 x 10 Softgels', 'Softgel', array['Once daily','Antioxidant rich'], 1),
-    (sub, 'Avero D3 60K', 'avero-d3-60k', 'Cholecalciferol 60000 IU', 'Weekly vitamin D3 sachet for deficiency correction.', '4 Sachets', 'Sachet', array['Weekly dose'], 2),
-    (sub, 'Averofer XT', 'averofer-xt', 'Ferrous Ascorbate 100 mg + Folic Acid 1.5 mg', 'Iron supplementation with improved tolerability.', '10 x 10 Tablets', 'Tablet', array['Gentle on stomach'], 3);
+  insert into public.products (subcategory_id, name, slug, composition, description, image_url, pack_size, dosage_form, highlights, sort_order) values
+    (sub, 'Averovit Gold', 'averovit-gold', 'Multivitamin + Multimineral + Antioxidants', 'Comprehensive daily supplement for adults.', 'https://images.unsplash.com/photo-1512069772995-ec65ed45afd6?auto=format&fit=crop&w=700&q=80', '10 x 10 Softgels', 'Softgel', array['Once daily','Antioxidant rich'], 1),
+    (sub, 'Avero D3 60K', 'avero-d3-60k', 'Cholecalciferol 60000 IU', 'Weekly vitamin D3 sachet for deficiency correction.', 'https://images.unsplash.com/photo-1584017911766-d451b3d0e843?auto=format&fit=crop&w=700&q=80', '4 Sachets', 'Sachet', array['Weekly dose'], 2),
+    (sub, 'Averofer XT', 'averofer-xt', 'Ferrous Ascorbate 100 mg + Folic Acid 1.5 mg', 'Iron supplementation with improved tolerability.', 'https://images.unsplash.com/photo-1607619056574-7b8d3ee536b2?auto=format&fit=crop&w=700&q=80', '10 x 10 Tablets', 'Tablet', array['Gentle on stomach'], 3);
 
   -- Nutraceuticals → Bone & Joint
-  insert into public.product_subcategories (category_id, name, slug, description, sort_order)
+  insert into public.product_subcategories (category_id, name, slug, description, image_url, sort_order)
   values (cat_nutra, 'Bone & Joint', 'bone-joint',
-          'Calcium, collagen and joint-mobility formulations.', 2)
+          'Calcium, collagen and joint-mobility formulations.',
+          'https://images.unsplash.com/photo-1631549916768-4119b2e5f926?auto=format&fit=crop&w=900&q=80', 2)
   returning id into sub;
-  insert into public.products (subcategory_id, name, slug, composition, description, pack_size, dosage_form, highlights, sort_order) values
-    (sub, 'Averocal K2', 'averocal-k2', 'Calcium Citrate 1000 mg + Vitamin D3 + Vitamin K2-7', 'Bone-mineral support with directed calcium utilisation.', '10 x 10 Tablets', 'Tablet', array['With K2-7'], 1),
-    (sub, 'Averojoint Plus', 'averojoint-plus', 'Glucosamine + Diacerein + MSM', 'Joint comfort and cartilage support.', '10 x 10 Tablets', 'Tablet', array['Cartilage support'], 2);
+  insert into public.products (subcategory_id, name, slug, composition, description, image_url, pack_size, dosage_form, highlights, sort_order) values
+    (sub, 'Averocal K2', 'averocal-k2', 'Calcium Citrate 1000 mg + Vitamin D3 + Vitamin K2-7', 'Bone-mineral support with directed calcium utilisation.', 'https://images.unsplash.com/photo-1628771065518-0d82f1938462?auto=format&fit=crop&w=700&q=80', '10 x 10 Tablets', 'Tablet', array['With K2-7'], 1),
+    (sub, 'Averojoint Plus', 'averojoint-plus', 'Glucosamine + Diacerein + MSM', 'Joint comfort and cartilage support.', 'https://images.unsplash.com/photo-1603398938378-e54eab446dde?auto=format&fit=crop&w=700&q=80', '10 x 10 Tablets', 'Tablet', array['Cartilage support'], 2);
 
   -- Wellness → Immunity & Daily Wellness (default)
-  insert into public.product_subcategories (category_id, name, slug, description, sort_order, is_default)
+  insert into public.product_subcategories (category_id, name, slug, description, image_url, sort_order, is_default)
   values (cat_well, 'Immunity & Daily Wellness', 'immunity-daily-wellness',
-          'Everyday wellness products for the whole family.', 1, true)
+          'Everyday wellness products for the whole family.',
+          'https://images.unsplash.com/photo-1590502593747-42a996133562?auto=format&fit=crop&w=900&q=80', 1, true)
   returning id into sub;
-  insert into public.products (subcategory_id, name, slug, composition, description, pack_size, dosage_form, highlights, sort_order) values
-    (sub, 'Avero Immuno Boost', 'avero-immuno-boost', 'Vitamin C + Zinc + Elderberry Extract', 'Daily immunity support with natural antioxidants.', '10 x 10 Tablets', 'Tablet', array['Natural extract'], 1),
-    (sub, 'Avero Protein Care', 'avero-protein-care', 'Whey Protein + Vitamins + Minerals', 'Nutritional protein blend for recovery and daily nutrition.', '200 g Jar', 'Powder', array['Chocolate flavour'], 2);
+  insert into public.products (subcategory_id, name, slug, composition, description, image_url, pack_size, dosage_form, highlights, sort_order) values
+    (sub, 'Avero Immuno Boost', 'avero-immuno-boost', 'Vitamin C + Zinc + Elderberry Extract', 'Daily immunity support with natural antioxidants.', 'https://images.unsplash.com/photo-1590502593747-42a996133562?auto=format&fit=crop&w=700&q=80', '10 x 10 Tablets', 'Tablet', array['Natural extract'], 1),
+    (sub, 'Avero Protein Care', 'avero-protein-care', 'Whey Protein + Vitamins + Minerals', 'Nutritional protein blend for recovery and daily nutrition.', 'https://images.unsplash.com/photo-1580281658223-9b93f18ae9ae?auto=format&fit=crop&w=700&q=80', '200 g Jar', 'Powder', array['Chocolate flavour'], 2);
 
   -- Wellness → Skin & Hair Care
-  insert into public.product_subcategories (category_id, name, slug, description, sort_order)
+  insert into public.product_subcategories (category_id, name, slug, description, image_url, sort_order)
   values (cat_well, 'Skin & Hair Care', 'skin-hair-care',
-          'Dermatology-inspired wellness for skin, hair and nails.', 2)
+          'Dermatology-inspired wellness for skin, hair and nails.',
+          'https://images.unsplash.com/photo-1600353068440-6361ef3a86e8?auto=format&fit=crop&w=900&q=80', 2)
   returning id into sub;
-  insert into public.products (subcategory_id, name, slug, composition, description, pack_size, dosage_form, highlights, sort_order) values
-    (sub, 'Averobiotin Plus', 'averobiotin-plus', 'Biotin 10 mg + Amino Acids + Minerals', 'Supports hair strength, skin health and nail growth.', '10 x 10 Tablets', 'Tablet', array['High-strength biotin'], 1);
+  insert into public.products (subcategory_id, name, slug, composition, description, image_url, pack_size, dosage_form, highlights, sort_order) values
+    (sub, 'Averobiotin Plus', 'averobiotin-plus', 'Biotin 10 mg + Amino Acids + Minerals', 'Supports hair strength, skin health and nail growth.', 'https://images.unsplash.com/photo-1600353068440-6361ef3a86e8?auto=format&fit=crop&w=700&q=80', '10 x 10 Tablets', 'Tablet', array['High-strength biotin'], 1);
 end $$;

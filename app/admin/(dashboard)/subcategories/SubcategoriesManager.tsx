@@ -8,6 +8,7 @@ import ImageField from '@/components/admin/ImageField';
 import { ConfirmDialog, EmptyState, Modal, useToast } from '@/components/admin/ui';
 import { getBrowserClient } from '@/lib/supabase/browser';
 import { revalidateSite } from '@/app/actions/revalidate';
+import { cleanupMedia } from '@/lib/media-cleanup';
 import { slugify } from '@/lib/slug';
 import type {
   ProductCategoryRow,
@@ -115,6 +116,8 @@ export default function SubcategoriesManager({
     if (!payload.category_id) return show('Choose a category first.', 'error');
     if (!payload.name || !payload.slug) return show('A range name is required.', 'error');
 
+    const previousImageId = editing?.image_public_id ?? null;
+
     setBusy(true);
     const { error } = editing
       ? await supabase.from('product_subcategories').update(payload).eq('id', editing.id)
@@ -131,6 +134,10 @@ export default function SubcategoriesManager({
           : error.message,
         'error',
       );
+    }
+
+    if (previousImageId && previousImageId !== payload.image_public_id) {
+      await cleanupMedia([previousImageId]);
     }
 
     setOpen(false);
@@ -182,11 +189,23 @@ export default function SubcategoriesManager({
 
   async function confirmDelete() {
     if (!deleting) return;
+
+    // Products inside this range are cascade-deleted — collect their images too.
+    const { data: prods } = await supabase
+      .from('products')
+      .select('image_public_id')
+      .eq('subcategory_id', deleting.id);
+    const orphanedImages = [
+      deleting.image_public_id,
+      ...(prods ?? []).map((p: { image_public_id: string | null }) => p.image_public_id),
+    ];
+
     setBusy(true);
     const { error } = await supabase.from('product_subcategories').delete().eq('id', deleting.id);
     setBusy(false);
     setDeleting(null);
     if (error) return show(error.message, 'error');
+    await cleanupMedia(orphanedImages);
     await refresh();
     await revalidateSite(['/products']);
     show('Range deleted.');

@@ -8,6 +8,7 @@ import ImageField from '@/components/admin/ImageField';
 import { ConfirmDialog, EmptyState, Modal, Segmented, useToast } from '@/components/admin/ui';
 import { getBrowserClient } from '@/lib/supabase/browser';
 import { revalidateSite } from '@/app/actions/revalidate';
+import { cleanupMedia } from '@/lib/media-cleanup';
 import { cld } from '@/lib/cloudinary';
 import { slugify } from '@/lib/slug';
 import type { ProductCategoryRow } from '@/lib/supabase/database.types';
@@ -100,6 +101,9 @@ export default function CategoriesManager({ initial, subCounts, productCounts }:
       return show('A category name is required.', 'error');
     }
 
+    // Remember the outgoing image so it can be tidied up after a successful save.
+    const previousImageId = editing?.image_public_id ?? null;
+
     setBusy(true);
     const { error } = editing
       ? await supabase.from('product_categories').update(payload).eq('id', editing.id)
@@ -113,6 +117,10 @@ export default function CategoriesManager({ initial, subCounts, productCounts }:
         error.code === '23505' ? 'Another category already uses that URL name.' : error.message,
         'error',
       );
+    }
+
+    if (previousImageId && previousImageId !== payload.image_public_id) {
+      await cleanupMedia([previousImageId]);
     }
 
     setOpen(false);
@@ -147,11 +155,27 @@ export default function CategoriesManager({ initial, subCounts, productCounts }:
 
   async function confirmDelete() {
     if (!deleting) return;
+
+    // Cascade removes the ranges and products too, so collect their images first.
+    const [{ data: subs }, { data: prods }] = await Promise.all([
+      supabase.from('product_subcategories').select('id, image_public_id').eq('category_id', deleting.id),
+      supabase.from('products').select('image_public_id, subcategory_id'),
+    ]);
+    const subIds = new Set((subs ?? []).map((s: { id: string }) => s.id));
+    const orphanedImages = [
+      deleting.image_public_id,
+      ...(subs ?? []).map((s: { image_public_id: string | null }) => s.image_public_id),
+      ...(prods ?? [])
+        .filter((p: { subcategory_id: string }) => subIds.has(p.subcategory_id))
+        .map((p: { image_public_id: string | null }) => p.image_public_id),
+    ];
+
     setBusy(true);
     const { error } = await supabase.from('product_categories').delete().eq('id', deleting.id);
     setBusy(false);
     setDeleting(null);
     if (error) return show(error.message, 'error');
+    await cleanupMedia(orphanedImages);
     await refresh();
     await revalidateSite(['/products']);
     show('Category deleted.');

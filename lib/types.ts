@@ -268,6 +268,8 @@ export interface BrandSettings {
   name: string;
   tagline: string;
   logoUrl: string;
+  /** Cloudinary id for logoUrl, so a replaced logo can be cleaned up. */
+  logoPublicId?: string;
   faviconUrl: string;
   description: string;
 }

@@ -7,6 +7,7 @@ import Icon from '@/components/Icon';
 import { ConfirmDialog, Modal, useToast } from '@/components/admin/ui';
 import { getBrowserClient } from '@/lib/supabase/browser';
 import { revalidateSite } from '@/app/actions/revalidate';
+import { cleanupMedia, collectPublicIds } from '@/lib/media-cleanup';
 import type { PageRow } from '@/lib/supabase/database.types';
 
 interface Props {
@@ -117,11 +118,24 @@ export default function PagesManager({ initialPages, sectionCounts }: Props) {
 
   async function confirmDelete() {
     if (!deleting) return;
+
+    // Sections cascade with the page — gather their images before they vanish.
+    const { data: sections } = await supabase
+      .from('page_sections')
+      .select('content')
+      .eq('page_id', deleting.id);
+    const orphanedImages = [
+      ...new Set(
+        (sections ?? []).flatMap((s: { content: unknown }) => [...collectPublicIds(s.content)]),
+      ),
+    ];
+
     setBusy(true);
     const { error } = await supabase.from('pages').delete().eq('id', deleting.id);
     setBusy(false);
     setDeleting(null);
     if (error) return show(error.message, 'error');
+    if (orphanedImages.length) await cleanupMedia(orphanedImages);
     await refresh();
     await revalidateSite();
     show('Page deleted.');

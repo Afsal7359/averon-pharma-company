@@ -51,34 +51,36 @@ export function Hero({ c }: { c: HeroContent }) {
       )}
 
       <div className="container hero-inner">
-        {c.tag && (
-          <div className="hero-tag">
-            <span className="dot" /> {c.tag}
-          </div>
-        )}
+        <div className="hero-panel">
+          {c.tag && (
+            <div className="hero-tag">
+              <span className="dot" /> {c.tag}
+            </div>
+          )}
 
-        {lines.length > 0 && (
-          <h1>
-            {lines.map((line, i) => (
-              <span className="line" key={i}>
-                <span>{renderLine(line, i)}</span>
-              </span>
-            ))}
-          </h1>
-        )}
+          {lines.length > 0 && (
+            <h1>
+              {lines.map((line, i) => (
+                <span className="line" key={i}>
+                  <span>{renderLine(line, i)}</span>
+                </span>
+              ))}
+            </h1>
+          )}
 
-        {c.subtitle && <p className="hero-sub">{c.subtitle}</p>}
+          {c.subtitle && <p className="hero-sub">{c.subtitle}</p>}
 
-        {(c.primaryCta?.label || c.secondaryCta?.label) && (
-          <div className="hero-actions">
-            <Button link={c.primaryCta} className="btn btn--primary" />
-            {c.secondaryCta?.label && c.secondaryCta?.href && (
-              <Link href={c.secondaryCta.href} className="btn btn--outline">
-                {c.secondaryCta.label}
-              </Link>
-            )}
-          </div>
-        )}
+          {(c.primaryCta?.label || c.secondaryCta?.label) && (
+            <div className="hero-actions">
+              <Button link={c.primaryCta} className="btn btn--primary" />
+              {c.secondaryCta?.label && c.secondaryCta?.href && (
+                <Link href={c.secondaryCta.href} className="btn btn--outline">
+                  {c.secondaryCta.label}
+                </Link>
+              )}
+            </div>
+          )}
+        </div>
       </div>
 
       <div className="hero-scroll-cue">

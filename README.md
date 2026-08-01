@@ -37,10 +37,13 @@ cp .env.example .env.local
 2. **SQL Editor → New query** → paste all of `supabase/schema.sql` → Run.
 3. New query → paste all of `supabase/seed.sql` → Run.
    This loads the current website content and a sample catalogue.
-4. **Project Settings → API** — copy into `.env.local`:
+4. **Project Settings → API Keys** — copy into `.env.local`:
    - Project URL → `NEXT_PUBLIC_SUPABASE_URL`
-   - `anon` `public` key → `NEXT_PUBLIC_SUPABASE_ANON_KEY`
-   - `service_role` key → `SUPABASE_SERVICE_ROLE_KEY` *(server-only — never expose)*
+   - `publishable` key (`sb_publishable_…`) → `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`
+     *(older projects show an `anon` `public` JWT instead — put it in
+     `NEXT_PUBLIC_SUPABASE_ANON_KEY`; the app accepts either)*
+   - `secret` key (`sb_secret_…`, or the legacy `service_role` key) →
+     `SUPABASE_SERVICE_ROLE_KEY` *(server-only — never expose)*
 
 Both SQL files are safe to re-run. Re-running `seed.sql` resets page content back
 to the baseline but leaves your product catalogue alone.
@@ -71,6 +74,17 @@ Uploads are **signed**: the browser requests a signature from the server, then
 posts the file straight to Cloudinary. The API secret never reaches the browser
 and large files never pass through Next.js. Delivery URLs get `f_auto,q_auto`
 plus sizing applied automatically.
+
+**Cleaning up unused images.** Replacing or deleting anything that holds an image
+(product, range, category, page section, whole page, or the logo) removes the old
+file from Cloudinary too — but only after checking nothing else still uses it,
+since one image can be reused in several places. Deleting an in-use image from
+the Media Library tells you exactly where it appears and asks before proceeding.
+
+One case is deliberately left alone: an image uploaded while a form is open and
+then cancelled stays in the Media Library, where you can see and delete it. It is
+never auto-deleted, because it may have been picked from the library rather than
+freshly uploaded.
 
 ### 5. Run
 
@@ -129,18 +143,23 @@ Callout Box, CTA Banner, Pulse Divider, Product Catalogue, Contact Form.
 
 ### Products: category → range → product
 
-This is the three-level structure the products page uses:
+Three levels, spread over two pages:
 
-1. **Categories** (e.g. Pharmaceuticals) — the cards a visitor picks first.
-2. **Subcategories / ranges** (e.g. Anti-Infectives) — one per category is
-   flagged **default** and opens automatically when its category is selected.
-   A database trigger guarantees only one default per category.
+1. **Categories** (e.g. Pharmaceuticals) — `/products` shows *only* these, as
+   cards with an image, description and range/product counts.
+2. **Subcategories / ranges** (e.g. Anti-Infectives) — clicking a category opens
+   its own page at `/products/<category>`, which lands on the range flagged
+   **default** in the admin. A database trigger guarantees exactly one default
+   per category. A **← All categories** button returns to the grid.
 3. **Products** — name, composition, description, image, dosage form, pack size
-   and highlight tags.
+   and highlight tags, listed for the selected range.
 
-On the public page: choosing a category opens its default range immediately;
-other ranges are one tap away — as chips on desktop, and as a native
-**"Choose a range"** dropdown on mobile.
+Switching range is a sidebar list on desktop; on mobile it's a button that
+expands the full list directly beneath it.
+
+Category pages reuse the trailing sections of the Products page (the process
+steps and CTA banner), so editing those in the admin updates every category
+page at once.
 
 ### Everything else
 

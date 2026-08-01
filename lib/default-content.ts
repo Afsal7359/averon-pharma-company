@@ -11,6 +11,7 @@ export const DEFAULT_SETTINGS: SiteSettings = {
     name: 'Averon Life Sciences',
     tagline: 'Trust in Every Dose. Care for Every Life.',
     logoUrl: '/assets/logo.png',
+    logoPublicId: '',
     faviconUrl: '/assets/favicon.svg',
     description:
       'A pharmaceutical and healthcare company committed to delivering high-quality, safe, and effective healthcare solutions that improve lives.',
@@ -647,14 +648,15 @@ export const DEFAULT_CATALOG: CatalogCategory[] = [
         slug: 'anti-infectives',
         description:
           'Antibacterial and antimicrobial formulations for common and resistant infections.',
-        image_url: null,
+        image_url:
+          'https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?auto=format&fit=crop&w=900&q=80',
         sort_order: 1,
         is_default: true,
         is_active: true,
         products: [
-          { id: 'p1', subcategory_id: 'local-sub-anti', name: 'Averocef 200', slug: 'averocef-200', composition: 'Cefixime 200 mg', description: 'Third-generation cephalosporin for respiratory and urinary tract infections.', image_url: null, pack_size: '10 x 10 Tablets', dosage_form: 'Tablet', highlights: ['Broad spectrum', 'Twice daily'], sort_order: 1, is_active: true, is_featured: false },
-          { id: 'p2', subcategory_id: 'local-sub-anti', name: 'Averoclav 625', slug: 'averoclav-625', composition: 'Amoxycillin 500 mg + Clavulanic Acid 125 mg', description: 'Beta-lactam combination for a wide range of bacterial infections.', image_url: null, pack_size: '10 x 6 Tablets', dosage_form: 'Tablet', highlights: ['Beta-lactamase protected'], sort_order: 2, is_active: true, is_featured: false },
-          { id: 'p3', subcategory_id: 'local-sub-anti', name: 'Averozid 500', slug: 'averozid-500', composition: 'Azithromycin 500 mg', description: 'Macrolide antibiotic with a convenient short course.', image_url: null, pack_size: '1 x 3 Tablets', dosage_form: 'Tablet', highlights: ['3-day course', 'Once daily'], sort_order: 3, is_active: true, is_featured: false },
+          { id: 'p1', subcategory_id: 'local-sub-anti', name: 'Averocef 200', slug: 'averocef-200', composition: 'Cefixime 200 mg', description: 'Third-generation cephalosporin for respiratory and urinary tract infections.', image_url: 'https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?auto=format&fit=crop&w=700&q=80', pack_size: '10 x 10 Tablets', dosage_form: 'Tablet', highlights: ['Broad spectrum', 'Twice daily'], sort_order: 1, is_active: true, is_featured: false },
+          { id: 'p2', subcategory_id: 'local-sub-anti', name: 'Averoclav 625', slug: 'averoclav-625', composition: 'Amoxycillin 500 mg + Clavulanic Acid 125 mg', description: 'Beta-lactam combination for a wide range of bacterial infections.', image_url: 'https://images.unsplash.com/photo-1631549916768-4119b2e5f926?auto=format&fit=crop&w=700&q=80', pack_size: '10 x 6 Tablets', dosage_form: 'Tablet', highlights: ['Beta-lactamase protected'], sort_order: 2, is_active: true, is_featured: false },
+          { id: 'p3', subcategory_id: 'local-sub-anti', name: 'Averozid 500', slug: 'averozid-500', composition: 'Azithromycin 500 mg', description: 'Macrolide antibiotic with a convenient short course.', image_url: 'https://images.unsplash.com/photo-1585435557343-3b092031a831?auto=format&fit=crop&w=700&q=80', pack_size: '1 x 3 Tablets', dosage_form: 'Tablet', highlights: ['3-day course', 'Once daily'], sort_order: 3, is_active: true, is_featured: false },
         ],
       },
       {
@@ -663,13 +665,14 @@ export const DEFAULT_CATALOG: CatalogCategory[] = [
         name: 'Pain & Inflammation',
         slug: 'pain-inflammation',
         description: 'Analgesic and anti-inflammatory formulations for acute and chronic pain.',
-        image_url: null,
+        image_url:
+          'https://images.unsplash.com/photo-1626716493137-b67fe9501e76?auto=format&fit=crop&w=900&q=80',
         sort_order: 2,
         is_default: false,
         is_active: true,
         products: [
-          { id: 'p4', subcategory_id: 'local-sub-pain', name: 'Averodol P', slug: 'averodol-p', composition: 'Aceclofenac 100 mg + Paracetamol 325 mg', description: 'Dual-action relief for musculoskeletal and post-operative pain.', image_url: null, pack_size: '10 x 10 Tablets', dosage_form: 'Tablet', highlights: ['Fast onset'], sort_order: 1, is_active: true, is_featured: false },
-          { id: 'p5', subcategory_id: 'local-sub-pain', name: 'Averonac SP', slug: 'averonac-sp', composition: 'Aceclofenac 100 mg + Paracetamol 325 mg + Serratiopeptidase 15 mg', description: 'Anti-inflammatory combination with enzymatic anti-oedema action.', image_url: null, pack_size: '10 x 10 Tablets', dosage_form: 'Tablet', highlights: ['Reduces swelling'], sort_order: 2, is_active: true, is_featured: false },
+          { id: 'p4', subcategory_id: 'local-sub-pain', name: 'Averodol P', slug: 'averodol-p', composition: 'Aceclofenac 100 mg + Paracetamol 325 mg', description: 'Dual-action relief for musculoskeletal and post-operative pain.', image_url: 'https://images.unsplash.com/photo-1626716493137-b67fe9501e76?auto=format&fit=crop&w=700&q=80', pack_size: '10 x 10 Tablets', dosage_form: 'Tablet', highlights: ['Fast onset'], sort_order: 1, is_active: true, is_featured: false },
+          { id: 'p5', subcategory_id: 'local-sub-pain', name: 'Averonac SP', slug: 'averonac-sp', composition: 'Aceclofenac 100 mg + Paracetamol 325 mg + Serratiopeptidase 15 mg', description: 'Anti-inflammatory combination with enzymatic anti-oedema action.', image_url: 'https://images.unsplash.com/photo-1471864190281-a93a3070b6de?auto=format&fit=crop&w=700&q=80', pack_size: '10 x 10 Tablets', dosage_form: 'Tablet', highlights: ['Reduces swelling'], sort_order: 2, is_active: true, is_featured: false },
         ],
       },
       {
@@ -678,13 +681,14 @@ export const DEFAULT_CATALOG: CatalogCategory[] = [
         name: 'Gastro Care',
         slug: 'gastro-care',
         description: 'Acid control, digestive and gut-health formulations.',
-        image_url: null,
+        image_url:
+          'https://images.unsplash.com/photo-1585435557343-3b092031a831?auto=format&fit=crop&w=900&q=80',
         sort_order: 3,
         is_default: false,
         is_active: true,
         products: [
-          { id: 'p6', subcategory_id: 'local-sub-gastro', name: 'Averopan DSR', slug: 'averopan-dsr', composition: 'Pantoprazole 40 mg + Domperidone 30 mg (SR)', description: 'Proton pump inhibitor with prokinetic for reflux and dyspepsia.', image_url: null, pack_size: '10 x 10 Capsules', dosage_form: 'Capsule', highlights: ['Sustained release'], sort_order: 1, is_active: true, is_featured: false },
-          { id: 'p7', subcategory_id: 'local-sub-gastro', name: 'Averozyme Syrup', slug: 'averozyme-syrup', composition: 'Digestive enzyme blend', description: 'Palatable enzyme syrup supporting digestion and appetite.', image_url: null, pack_size: '200 ml Bottle', dosage_form: 'Syrup', highlights: ['Sugar-free'], sort_order: 2, is_active: true, is_featured: false },
+          { id: 'p6', subcategory_id: 'local-sub-gastro', name: 'Averopan DSR', slug: 'averopan-dsr', composition: 'Pantoprazole 40 mg + Domperidone 30 mg (SR)', description: 'Proton pump inhibitor with prokinetic for reflux and dyspepsia.', image_url: 'https://images.unsplash.com/photo-1587854692152-cbe660dbde88?auto=format&fit=crop&w=700&q=80', pack_size: '10 x 10 Capsules', dosage_form: 'Capsule', highlights: ['Sustained release'], sort_order: 1, is_active: true, is_featured: false },
+          { id: 'p7', subcategory_id: 'local-sub-gastro', name: 'Averozyme Syrup', slug: 'averozyme-syrup', composition: 'Digestive enzyme blend', description: 'Palatable enzyme syrup supporting digestion and appetite.', image_url: 'https://images.unsplash.com/photo-1576602976047-174e57a47881?auto=format&fit=crop&w=700&q=80', pack_size: '200 ml Bottle', dosage_form: 'Syrup', highlights: ['Sugar-free'], sort_order: 2, is_active: true, is_featured: false },
         ],
       },
     ],
@@ -709,14 +713,15 @@ export const DEFAULT_CATALOG: CatalogCategory[] = [
         name: 'Vitamins & Minerals',
         slug: 'vitamins-minerals',
         description: 'Daily micronutrient support for energy, immunity and recovery.',
-        image_url: null,
+        image_url:
+          'https://images.unsplash.com/photo-1512069772995-ec65ed45afd6?auto=format&fit=crop&w=900&q=80',
         sort_order: 1,
         is_default: true,
         is_active: true,
         products: [
-          { id: 'p8', subcategory_id: 'local-sub-vit', name: 'Averovit Gold', slug: 'averovit-gold', composition: 'Multivitamin + Multimineral + Antioxidants', description: 'Comprehensive daily supplement for adults.', image_url: null, pack_size: '10 x 10 Softgels', dosage_form: 'Softgel', highlights: ['Once daily', 'Antioxidant rich'], sort_order: 1, is_active: true, is_featured: false },
-          { id: 'p9', subcategory_id: 'local-sub-vit', name: 'Avero D3 60K', slug: 'avero-d3-60k', composition: 'Cholecalciferol 60000 IU', description: 'Weekly vitamin D3 sachet for deficiency correction.', image_url: null, pack_size: '4 Sachets', dosage_form: 'Sachet', highlights: ['Weekly dose'], sort_order: 2, is_active: true, is_featured: false },
-          { id: 'p10', subcategory_id: 'local-sub-vit', name: 'Averofer XT', slug: 'averofer-xt', composition: 'Ferrous Ascorbate 100 mg + Folic Acid 1.5 mg', description: 'Iron supplementation with improved tolerability.', image_url: null, pack_size: '10 x 10 Tablets', dosage_form: 'Tablet', highlights: ['Gentle on stomach'], sort_order: 3, is_active: true, is_featured: false },
+          { id: 'p8', subcategory_id: 'local-sub-vit', name: 'Averovit Gold', slug: 'averovit-gold', composition: 'Multivitamin + Multimineral + Antioxidants', description: 'Comprehensive daily supplement for adults.', image_url: 'https://images.unsplash.com/photo-1512069772995-ec65ed45afd6?auto=format&fit=crop&w=700&q=80', pack_size: '10 x 10 Softgels', dosage_form: 'Softgel', highlights: ['Once daily', 'Antioxidant rich'], sort_order: 1, is_active: true, is_featured: false },
+          { id: 'p9', subcategory_id: 'local-sub-vit', name: 'Avero D3 60K', slug: 'avero-d3-60k', composition: 'Cholecalciferol 60000 IU', description: 'Weekly vitamin D3 sachet for deficiency correction.', image_url: 'https://images.unsplash.com/photo-1584017911766-d451b3d0e843?auto=format&fit=crop&w=700&q=80', pack_size: '4 Sachets', dosage_form: 'Sachet', highlights: ['Weekly dose'], sort_order: 2, is_active: true, is_featured: false },
+          { id: 'p10', subcategory_id: 'local-sub-vit', name: 'Averofer XT', slug: 'averofer-xt', composition: 'Ferrous Ascorbate 100 mg + Folic Acid 1.5 mg', description: 'Iron supplementation with improved tolerability.', image_url: 'https://images.unsplash.com/photo-1607619056574-7b8d3ee536b2?auto=format&fit=crop&w=700&q=80', pack_size: '10 x 10 Tablets', dosage_form: 'Tablet', highlights: ['Gentle on stomach'], sort_order: 3, is_active: true, is_featured: false },
         ],
       },
       {
@@ -725,13 +730,14 @@ export const DEFAULT_CATALOG: CatalogCategory[] = [
         name: 'Bone & Joint',
         slug: 'bone-joint',
         description: 'Calcium, collagen and joint-mobility formulations.',
-        image_url: null,
+        image_url:
+          'https://images.unsplash.com/photo-1631549916768-4119b2e5f926?auto=format&fit=crop&w=900&q=80',
         sort_order: 2,
         is_default: false,
         is_active: true,
         products: [
-          { id: 'p11', subcategory_id: 'local-sub-bone', name: 'Averocal K2', slug: 'averocal-k2', composition: 'Calcium Citrate 1000 mg + Vitamin D3 + Vitamin K2-7', description: 'Bone-mineral support with directed calcium utilisation.', image_url: null, pack_size: '10 x 10 Tablets', dosage_form: 'Tablet', highlights: ['With K2-7'], sort_order: 1, is_active: true, is_featured: false },
-          { id: 'p12', subcategory_id: 'local-sub-bone', name: 'Averojoint Plus', slug: 'averojoint-plus', composition: 'Glucosamine + Diacerein + MSM', description: 'Joint comfort and cartilage support.', image_url: null, pack_size: '10 x 10 Tablets', dosage_form: 'Tablet', highlights: ['Cartilage support'], sort_order: 2, is_active: true, is_featured: false },
+          { id: 'p11', subcategory_id: 'local-sub-bone', name: 'Averocal K2', slug: 'averocal-k2', composition: 'Calcium Citrate 1000 mg + Vitamin D3 + Vitamin K2-7', description: 'Bone-mineral support with directed calcium utilisation.', image_url: 'https://images.unsplash.com/photo-1628771065518-0d82f1938462?auto=format&fit=crop&w=700&q=80', pack_size: '10 x 10 Tablets', dosage_form: 'Tablet', highlights: ['With K2-7'], sort_order: 1, is_active: true, is_featured: false },
+          { id: 'p12', subcategory_id: 'local-sub-bone', name: 'Averojoint Plus', slug: 'averojoint-plus', composition: 'Glucosamine + Diacerein + MSM', description: 'Joint comfort and cartilage support.', image_url: 'https://images.unsplash.com/photo-1603398938378-e54eab446dde?auto=format&fit=crop&w=700&q=80', pack_size: '10 x 10 Tablets', dosage_form: 'Tablet', highlights: ['Cartilage support'], sort_order: 2, is_active: true, is_featured: false },
         ],
       },
     ],
@@ -756,13 +762,14 @@ export const DEFAULT_CATALOG: CatalogCategory[] = [
         name: 'Immunity & Daily Wellness',
         slug: 'immunity-daily-wellness',
         description: 'Everyday wellness products for the whole family.',
-        image_url: null,
+        image_url:
+          'https://images.unsplash.com/photo-1590502593747-42a996133562?auto=format&fit=crop&w=900&q=80',
         sort_order: 1,
         is_default: true,
         is_active: true,
         products: [
-          { id: 'p13', subcategory_id: 'local-sub-immu', name: 'Avero Immuno Boost', slug: 'avero-immuno-boost', composition: 'Vitamin C + Zinc + Elderberry Extract', description: 'Daily immunity support with natural antioxidants.', image_url: null, pack_size: '10 x 10 Tablets', dosage_form: 'Tablet', highlights: ['Natural extract'], sort_order: 1, is_active: true, is_featured: false },
-          { id: 'p14', subcategory_id: 'local-sub-immu', name: 'Avero Protein Care', slug: 'avero-protein-care', composition: 'Whey Protein + Vitamins + Minerals', description: 'Nutritional protein blend for recovery and daily nutrition.', image_url: null, pack_size: '200 g Jar', dosage_form: 'Powder', highlights: ['Chocolate flavour'], sort_order: 2, is_active: true, is_featured: false },
+          { id: 'p13', subcategory_id: 'local-sub-immu', name: 'Avero Immuno Boost', slug: 'avero-immuno-boost', composition: 'Vitamin C + Zinc + Elderberry Extract', description: 'Daily immunity support with natural antioxidants.', image_url: 'https://images.unsplash.com/photo-1590502593747-42a996133562?auto=format&fit=crop&w=700&q=80', pack_size: '10 x 10 Tablets', dosage_form: 'Tablet', highlights: ['Natural extract'], sort_order: 1, is_active: true, is_featured: false },
+          { id: 'p14', subcategory_id: 'local-sub-immu', name: 'Avero Protein Care', slug: 'avero-protein-care', composition: 'Whey Protein + Vitamins + Minerals', description: 'Nutritional protein blend for recovery and daily nutrition.', image_url: 'https://images.unsplash.com/photo-1580281658223-9b93f18ae9ae?auto=format&fit=crop&w=700&q=80', pack_size: '200 g Jar', dosage_form: 'Powder', highlights: ['Chocolate flavour'], sort_order: 2, is_active: true, is_featured: false },
         ],
       },
       {
@@ -771,12 +778,13 @@ export const DEFAULT_CATALOG: CatalogCategory[] = [
         name: 'Skin & Hair Care',
         slug: 'skin-hair-care',
         description: 'Dermatology-inspired wellness for skin, hair and nails.',
-        image_url: null,
+        image_url:
+          'https://images.unsplash.com/photo-1600353068440-6361ef3a86e8?auto=format&fit=crop&w=900&q=80',
         sort_order: 2,
         is_default: false,
         is_active: true,
         products: [
-          { id: 'p15', subcategory_id: 'local-sub-skin', name: 'Averobiotin Plus', slug: 'averobiotin-plus', composition: 'Biotin 10 mg + Amino Acids + Minerals', description: 'Supports hair strength, skin health and nail growth.', image_url: null, pack_size: '10 x 10 Tablets', dosage_form: 'Tablet', highlights: ['High-strength biotin'], sort_order: 1, is_active: true, is_featured: false },
+          { id: 'p15', subcategory_id: 'local-sub-skin', name: 'Averobiotin Plus', slug: 'averobiotin-plus', composition: 'Biotin 10 mg + Amino Acids + Minerals', description: 'Supports hair strength, skin health and nail growth.', image_url: 'https://images.unsplash.com/photo-1600353068440-6361ef3a86e8?auto=format&fit=crop&w=700&q=80', pack_size: '10 x 10 Tablets', dosage_form: 'Tablet', highlights: ['High-strength biotin'], sort_order: 1, is_active: true, is_featured: false },
         ],
       },
     ],

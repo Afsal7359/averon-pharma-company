@@ -6,7 +6,8 @@ export const revalidate = 60;
 /** Pages added in the admin panel after build are rendered on first request. */
 export const dynamicParams = true;
 
-const RESERVED = new Set(['home', 'admin', 'api']);
+/** Slugs owned by a dedicated route rather than this catch-all. */
+const RESERVED = new Set(['home', 'admin', 'api', 'products']);
 
 export async function generateStaticParams() {
   const pages = await getAllPages();

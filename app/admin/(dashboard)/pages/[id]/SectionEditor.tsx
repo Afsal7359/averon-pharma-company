@@ -1,12 +1,13 @@
 'use client';
 
 import Link from 'next/link';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useMemo, useRef, useState } from 'react';
 import Icon from '@/components/Icon';
 import SectionFields from '@/components/admin/SectionFields';
 import { ConfirmDialog, EmptyState, Modal, useToast } from '@/components/admin/ui';
 import { getBrowserClient } from '@/lib/supabase/browser';
 import { revalidateSite } from '@/app/actions/revalidate';
+import { cleanupMedia, collectPublicIds, removedPublicIds } from '@/lib/media-cleanup';
 import { SECTION_META, SECTION_TYPES, sectionSummary } from '@/lib/section-schema';
 import type { PageRow, PageSectionRow } from '@/lib/supabase/database.types';
 
@@ -25,6 +26,12 @@ export default function SectionEditor({ page, initialSections }: Props) {
   const [sections, setSections] = useState<Draft[]>(
     initialSections.map((s) => ({ ...s, content: (s.content ?? {}) as Record<string, any> })),
   );
+  // Snapshot of what's currently in the database, used to spot images that an
+  // edit has dropped so they can be removed from Cloudinary.
+  const savedRef = useRef<Record<string, Record<string, any>>>(
+    Object.fromEntries(initialSections.map((s) => [s.id, (s.content ?? {}) as Record<string, any>])),
+  );
+
   const [openId, setOpenId] = useState<string | null>(null);
   const [dirty, setDirty] = useState<Set<string>>(new Set());
   const [savingId, setSavingId] = useState<string | null>(null);
@@ -59,6 +66,10 @@ export default function SectionEditor({ page, initialSections }: Props) {
 
     if (error) return show(error.message, 'error');
 
+    const dropped = removedPublicIds(savedRef.current[section.id], section.content);
+    savedRef.current[section.id] = section.content;
+    if (dropped.length) await cleanupMedia(dropped);
+
     setDirty((prev) => {
       const next = new Set(prev);
       next.delete(section.id);
@@ -82,6 +93,13 @@ export default function SectionEditor({ page, initialSections }: Props) {
 
     const failed = results.find((r) => r.error);
     if (failed?.error) return show(failed.error.message, 'error');
+
+    const dropped = pending.flatMap((s) => {
+      const ids = removedPublicIds(savedRef.current[s.id], s.content);
+      savedRef.current[s.id] = s.content;
+      return ids;
+    });
+    if (dropped.length) await cleanupMedia(dropped);
 
     setDirty(new Set());
     await revalidateSite([pageUrl]);
@@ -143,6 +161,7 @@ export default function SectionEditor({ page, initialSections }: Props) {
     if (error || !data) return show(error?.message ?? 'Could not add the section.', 'error');
 
     const created = { ...(data as PageSectionRow), content: (data as PageSectionRow).content as Record<string, any> };
+    savedRef.current[created.id] = created.content;
     setSections((prev) => [...prev, created]);
     setOpenId(created.id);
     await revalidateSite([pageUrl]);
@@ -151,10 +170,15 @@ export default function SectionEditor({ page, initialSections }: Props) {
 
   async function confirmDelete() {
     if (!deleting) return;
+    const orphanedImages = [...collectPublicIds(deleting.content)];
+
     setBusy(true);
     const { error } = await supabase.from('page_sections').delete().eq('id', deleting.id);
     setBusy(false);
     if (error) return show(error.message, 'error');
+
+    delete savedRef.current[deleting.id];
+    if (orphanedImages.length) await cleanupMedia(orphanedImages);
 
     setSections((prev) => prev.filter((s) => s.id !== deleting.id));
     setDeleting(null);
