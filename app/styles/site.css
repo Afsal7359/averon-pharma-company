@@ -296,8 +296,12 @@ section { position: relative; }
 .navbar .container { display: flex; align-items: center; justify-content: space-between; height: 100%; }
 
 .brand { display: flex; align-items: center; gap: 12px; }
-.brand img { height: 38px; width: auto; transition: height .4s var(--ease); }
-.navbar.is-scrolled .brand img { height: 32px; }
+.brand img {
+  height: 46px;
+  width: auto;
+  transition: height .4s var(--ease);
+}
+.navbar.is-scrolled .brand img { height: 38px; }
 
 .nav-links { display: flex; align-items: center; gap: 4px; }
 .nav-links a {
@@ -808,11 +812,11 @@ body.menu-open { overflow: hidden; }
 .footer-brand .brand {
   display: inline-flex;
   background: var(--white);
-  padding: 12px 18px;
-  border-radius: 14px;
+  padding: 16px 22px;
+  border-radius: 16px;
   box-shadow: 0 12px 28px rgba(0,0,0,0.26);
 }
-.footer-brand .brand img { height: 40px; filter: none; }
+.footer-brand .brand img { height: 54px; filter: none; }
 .footer-brand p { color: rgba(255,255,255,0.82); margin-top: 22px; max-width: 320px; font-size: var(--fs-sm); line-height: 1.7; }
 .footer-tagline { font-family: var(--font-mono); font-size: var(--fs-xs); letter-spacing: 0.08em; color: #A8E6B4; margin-top: 22px; text-transform: uppercase; }
 

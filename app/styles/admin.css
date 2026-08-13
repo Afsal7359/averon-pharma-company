@@ -37,7 +37,7 @@
   padding: 24px 22px;
   border-bottom: 1px solid rgba(255,255,255,.1);
 }
-.admin-brand img { height: 30px; width: auto; filter: brightness(0) invert(1); }
+.admin-brand img { height: 38px; width: auto; filter: brightness(0) invert(1); }
 .admin-brand .tag {
   font-family: var(--font-mono);
   font-size: 10px;
@@ -501,7 +501,7 @@
   border: 1px solid var(--line);
   box-shadow: var(--shadow-lg);
 }
-.login-card img { height: 34px; width: auto; margin-bottom: 26px; }
+.login-card img { height: 46px; width: auto; margin-bottom: 26px; }
 .login-card h1 { font-size: 22px; font-weight: 800; letter-spacing: -0.02em; margin-bottom: 7px; }
 .login-card > p { font-size: 13.5px; margin-bottom: 26px; }
 .login-card .a-btn { width: 100%; padding: 13px; margin-top: 6px; }

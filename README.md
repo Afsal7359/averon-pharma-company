@@ -172,6 +172,21 @@ Saving anything revalidates the affected public pages immediately.
 
 ---
 
+## The logo asset
+
+`public/assets/logo.png` is cropped to the artwork's edges. The supplied file had
+roughly 34px of transparent padding baked in on every side, so only 62% of its
+height was actual logo — a `height: 38px` rule rendered a ~24px-tall wordmark and
+looked undersized no matter what the CSS said.
+
+Cropping means the CSS height now equals the height you actually see, so the
+navbar (46px, 38px once scrolled), footer (54px), admin sidebar (38px) and login
+card (46px) are all predictable. The untouched original is kept at
+`legacy/assets/logo.png`.
+
+Replacing the logo from **Admin → Settings** overrides this file entirely; upload
+a tightly-cropped image there for the same reason.
+
 ## Notes on the build
 
 - **Caching** — public pages are statically generated and revalidated every 60s;
