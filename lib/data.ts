@@ -8,6 +8,7 @@ import type {
   PageSection,
   PageWithSections,
   Product,
+  ProductLocation,
   ProductSubcategory,
   SiteSettings,
 } from './types';
@@ -137,7 +138,51 @@ export const getCatalog = cache(async (): Promise<CatalogCategory[]> => {
       )
       .map((sub) => ({
         ...sub,
-        products: products.filter((p) => p.subcategory_id === sub.id),
+        products: products.filter((p) => p.subcategory_id === sub.id).map(normaliseProduct),
       })),
   }));
 });
+
+/**
+ * `gallery` and `detail_html` were added after the first release, so rows
+ * written before the migration come back without them.
+ */
+function normaliseProduct(product: Product): Product {
+  return {
+    ...product,
+    gallery: Array.isArray(product.gallery)
+      ? product.gallery.filter((img) => img && typeof img.url === 'string' && img.url.trim())
+      : [],
+    detail_html: product.detail_html ?? null,
+  };
+}
+
+/**
+ * One product plus the category/range it sits in.
+ *
+ * Reads through getCatalog so it shares that request's cache — a detail page
+ * and its breadcrumb cost a single set of queries, not one per lookup.
+ */
+export const getProductLocation = cache(
+  async (categorySlug: string, productSlug: string): Promise<ProductLocation | null> => {
+    const catalog = await getCatalog();
+
+    for (const category of catalog) {
+      if (category.slug !== categorySlug) continue;
+
+      for (const subcategory of category.subcategories) {
+        const product = subcategory.products.find((p) => p.slug === productSlug);
+        if (!product) continue;
+
+        return {
+          category,
+          subcategory,
+          product,
+          siblings: subcategory.products.filter((p) => p.id !== product.id),
+        };
+      }
+    }
+
+    return null;
+  },
+);

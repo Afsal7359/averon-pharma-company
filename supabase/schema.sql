@@ -149,6 +149,12 @@ create table if not exists public.products (
 
 create index if not exists products_subcategory_idx on public.products (subcategory_id, sort_order);
 
+-- Product detail page: an ordered gallery plus a rich-text body.
+--   gallery      [{ "url": "...", "public_id": "...", "alt": "..." }, ...]
+--   detail_html  sanitised HTML from the admin's rich-text editor
+alter table public.products add column if not exists gallery     jsonb not null default '[]'::jsonb;
+alter table public.products add column if not exists detail_html text;
+
 -- -------------------------------------------------------------------------
 -- 5. ENQUIRIES  (contact form submissions)
 -- -------------------------------------------------------------------------

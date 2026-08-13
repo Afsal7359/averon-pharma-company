@@ -4,13 +4,17 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useMemo, useState } from 'react';
 import Icon from '@/components/Icon';
+import GalleryField from '@/components/admin/GalleryField';
 import ImageField from '@/components/admin/ImageField';
+import RichTextField from '@/components/admin/RichTextField';
 import { ConfirmDialog, EmptyState, Modal, StringList, useToast } from '@/components/admin/ui';
 import { getBrowserClient } from '@/lib/supabase/browser';
 import { revalidateSite } from '@/app/actions/revalidate';
 import { cleanupMedia } from '@/lib/media-cleanup';
 import { cld } from '@/lib/cloudinary';
+import { sanitizeHtml } from '@/lib/sanitize';
 import { slugify } from '@/lib/slug';
+import type { ProductImage } from '@/lib/types';
 import type {
   ProductCategoryRow,
   ProductRow,
@@ -35,6 +39,8 @@ interface Draft {
   pack_size: string;
   dosage_form: string;
   highlights: string[];
+  gallery: ProductImage[];
+  detail_html: string;
   is_active: boolean;
   is_featured: boolean;
 }
@@ -103,6 +109,8 @@ export default function ProductsManager({
       pack_size: '',
       dosage_form: '',
       highlights: [],
+      gallery: [],
+      detail_html: '',
       is_active: true,
       is_featured: false,
     });
@@ -122,6 +130,9 @@ export default function ProductsManager({
       pack_size: row.pack_size ?? '',
       dosage_form: row.dosage_form ?? '',
       highlights: row.highlights ?? [],
+      // Rows written before the gallery migration come back without the column.
+      gallery: Array.isArray(row.gallery) ? row.gallery : [],
+      detail_html: row.detail_html ?? '',
       is_active: row.is_active,
       is_featured: row.is_featured,
     });
@@ -143,6 +154,10 @@ export default function ProductsManager({
       pack_size: draft.pack_size.trim() || null,
       dosage_form: draft.dosage_form.trim() || null,
       highlights: draft.highlights.map((h) => h.trim()).filter(Boolean),
+      gallery: draft.gallery.filter((img) => img.url.trim()),
+      // Sanitised again on render, but storing clean HTML keeps the database
+      // free of anything the public page would refuse to display.
+      detail_html: sanitizeHtml(draft.detail_html) || null,
       is_active: draft.is_active,
       is_featured: draft.is_featured,
     };
@@ -150,7 +165,14 @@ export default function ProductsManager({
     if (!payload.subcategory_id) return show('Choose a range for this product.', 'error');
     if (!payload.name || !payload.slug) return show('A product name is required.', 'error');
 
-    const previousImageId = editing?.image_public_id ?? null;
+    // Images dropped from the main slot or the gallery during this edit.
+    const keptIds = new Set(
+      [payload.image_public_id, ...payload.gallery.map((img) => img.public_id)].filter(Boolean),
+    );
+    const orphaned = [
+      editing?.image_public_id,
+      ...(Array.isArray(editing?.gallery) ? editing.gallery.map((img) => img.public_id) : []),
+    ].filter((id): id is string => Boolean(id) && !keptIds.has(id!));
 
     setBusy(true);
     const { error } = editing
@@ -170,13 +192,11 @@ export default function ProductsManager({
       );
     }
 
-    if (previousImageId && previousImageId !== payload.image_public_id) {
-      await cleanupMedia([previousImageId]);
-    }
+    if (orphaned.length) await cleanupMedia(orphaned);
 
     setOpen(false);
     await refresh();
-    await revalidateSite(['/products']);
+    await revalidateSite(pathsFor(payload.subcategory_id, payload.slug));
     show(editing ? 'Product updated.' : 'Product added.');
   }
 
@@ -187,7 +207,7 @@ export default function ProductsManager({
     const { error } = await supabase.from('products').update(patch).eq('id', row.id);
     if (error) return show(error.message, 'error');
     await refresh();
-    await revalidateSite(['/products']);
+    await revalidateSite(pathsFor(row.subcategory_id, row.slug));
   }
 
   async function move(row: ProductRow, dir: -1 | 1) {
@@ -204,24 +224,44 @@ export default function ProductsManager({
       supabase.from('products').update({ sort_order: row.sort_order }).eq('id', target.id),
     ]);
     await refresh();
-    await revalidateSite(['/products']);
+    await revalidateSite(pathsFor(row.subcategory_id, row.slug));
   }
 
   async function confirmDelete() {
     if (!deleting) return;
     setBusy(true);
-    const orphanedImage = deleting.image_public_id;
+    const orphanedImages = [
+      deleting.image_public_id,
+      ...(Array.isArray(deleting.gallery) ? deleting.gallery.map((img) => img.public_id) : []),
+    ];
+    const { subcategory_id, slug } = deleting;
     const { error } = await supabase.from('products').delete().eq('id', deleting.id);
     setBusy(false);
     setDeleting(null);
     if (error) return show(error.message, 'error');
-    await cleanupMedia([orphanedImage]);
+    await cleanupMedia(orphanedImages);
     await refresh();
-    await revalidateSite(['/products']);
+    await revalidateSite(pathsFor(subcategory_id, slug));
     show('Product deleted.');
   }
 
   const subName = (id: string) => subcategories.find((s) => s.id === id)?.name ?? '—';
+
+  /** Products live under their category's URL, so that's what needs rebuilding. */
+  const categorySlugForSub = (subcategoryId: string) => {
+    const sub = subcategories.find((s) => s.id === subcategoryId);
+    return categories.find((c) => c.id === sub?.category_id)?.slug ?? '';
+  };
+
+  const pathsFor = (subcategoryId: string, productSlug?: string) => {
+    const category = categorySlugForSub(subcategoryId);
+    if (!category) return ['/products'];
+    return [
+      '/products',
+      `/products/${category}`,
+      ...(productSlug ? [`/products/${category}/${productSlug}`] : []),
+    ];
+  };
 
   if (subcategories.length === 0) {
     return (
@@ -525,14 +565,20 @@ export default function ProductsManager({
           </div>
 
           <ImageField
-            label="Product image"
+            label="Main image"
             value={draft.image_url}
             publicId={draft.image_public_id}
             onChange={(url, publicId) =>
               setDraft({ ...draft, image_url: url, image_public_id: publicId })
             }
             onClear={() => setDraft({ ...draft, image_url: '', image_public_id: '' })}
-            hint="Products without an image show a branded placeholder."
+            hint="Used on the product card. Products without an image show a branded placeholder."
+          />
+
+          <GalleryField
+            label="More images"
+            value={draft.gallery}
+            onChange={(gallery) => setDraft({ ...draft, gallery })}
           />
 
           <div className="a-grid a-grid-2">
@@ -561,6 +607,13 @@ export default function ProductsManager({
             values={draft.highlights}
             onChange={(v) => setDraft({ ...draft, highlights: v })}
             placeholder="Broad spectrum"
+          />
+
+          <RichTextField
+            label="Full details"
+            value={draft.detail_html}
+            onChange={(html) => setDraft({ ...draft, detail_html: html })}
+            hint="The long description on the product's own page — indications, dosage, storage. Leave empty to hide that section."
           />
 
           <div className="a-check-row" style={{ marginTop: 8 }}>

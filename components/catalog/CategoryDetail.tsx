@@ -177,7 +177,11 @@ export default function CategoryDetail({ category, emptyText }: Props) {
                 ) : (
                   <div className="product-grid">
                     {products.map((product) => (
-                      <article className="product-card" key={product.id}>
+                      <Link
+                        className="product-card is-link"
+                        key={product.id}
+                        href={`/products/${category.slug}/${product.slug}`}
+                      >
                         <div className="product-media">
                           {product.image_url ? (
                             <SmartImage
@@ -217,8 +221,13 @@ export default function CategoryDetail({ category, emptyText }: Props) {
                               ))}
                             </ul>
                           )}
+
+                          <span className="product-more">
+                            View details
+                            <Icon name="arrow" />
+                          </span>
                         </div>
-                      </article>
+                      </Link>
                     ))}
                   </div>
                 )}

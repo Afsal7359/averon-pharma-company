@@ -97,11 +97,19 @@ export type ProductRow = {
   pack_size: string | null;
   dosage_form: string | null;
   highlights: string[];
+  gallery: ProductImageRow[];
+  detail_html: string | null;
   sort_order: number;
   is_active: boolean;
   is_featured: boolean;
   created_at: string;
   updated_at: string;
+}
+
+export type ProductImageRow = {
+  url: string;
+  public_id: string;
+  alt: string;
 }
 
 export type EnquiryRow = {

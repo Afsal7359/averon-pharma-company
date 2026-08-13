@@ -58,7 +58,7 @@ export async function POST(request: Request) {
   const [categories, subcategories, products, sections, settings, pages] = await Promise.all([
     supabase.from('product_categories').select('name, image_url, image_public_id'),
     supabase.from('product_subcategories').select('name, image_url, image_public_id'),
-    supabase.from('products').select('name, image_url, image_public_id'),
+    supabase.from('products').select('name, image_url, image_public_id, gallery, detail_html'),
     supabase.from('page_sections').select('type, content, page_id'),
     supabase.from('site_settings').select('key, value'),
     supabase.from('pages').select('id, title, og_image_url'),

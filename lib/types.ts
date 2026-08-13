@@ -226,6 +226,12 @@ export interface ProductSubcategory {
   is_active: boolean;
 }
 
+export interface ProductImage {
+  url: string;
+  public_id: string;
+  alt: string;
+}
+
 export interface Product {
   id: string;
   subcategory_id: string;
@@ -237,6 +243,10 @@ export interface Product {
   pack_size: string | null;
   dosage_form: string | null;
   highlights: string[];
+  /** Extra images shown on the product detail page, in order. */
+  gallery: ProductImage[];
+  /** Sanitised rich text from the admin editor. */
+  detail_html: string | null;
   sort_order: number;
   is_active: boolean;
   is_featured: boolean;
@@ -248,6 +258,15 @@ export interface CatalogSubcategory extends ProductSubcategory {
 
 export interface CatalogCategory extends ProductCategory {
   subcategories: CatalogSubcategory[];
+}
+
+/** A single product plus the category/range it belongs to. */
+export interface ProductLocation {
+  category: CatalogCategory;
+  subcategory: CatalogSubcategory;
+  product: Product;
+  /** Other products in the same range, for the "more from this range" strip. */
+  siblings: Product[];
 }
 
 export interface Enquiry {
